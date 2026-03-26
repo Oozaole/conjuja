@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 题库生成脚本（仅本地使用）
+scripts/
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

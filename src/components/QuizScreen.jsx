@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { questionsBank, trainingPacks } from '../data/questions';
 import SpecialKeyboard from './SpecialKeyboard';
 import FeedbackCard from './FeedbackCard';
+import DistractorFeedback from './DistractorFeedback';
+import RuleCard from './RuleCard';
+import { useRuleProgress } from '../hooks/useRuleProgress';
 
 const themeStyles = {
   indigo: { bg: 'bg-indigo-500', bgDark: 'bg-indigo-600', bgLight: 'bg-indigo-100', text: 'text-indigo-600', caret: 'caret-indigo-500' },
@@ -17,16 +20,20 @@ const QuizScreen = ({ packId, onBack }) => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [inputValue, setInputValue] = useState('');
-  const [status, setStatus] = useState('typing'); // typing, correct, warning, error, finished
+  const [status, setStatus] = useState('typing'); // typing, correct, warning, error
   const [streak, setStreak] = useState(0);
-  
+  const [userAnswer, setUserAnswer] = useState('');
+
+  // Feature 6: Rule progress
+  const { onCorrect, onError, getRuleCard } = useRuleProgress();
+  const [activeRuleTag, setActiveRuleTag] = useState(null);
+
   const inputRef = useRef(null);
 
   const isFinished = currentIndex >= questions.length;
-  const currentQuestion = questions[currentIndex]; // Stop when out of questions
+  const currentQuestion = questions[currentIndex];
 
   useEffect(() => {
-    // Focus input on mount and next question
     if (status === 'typing' && inputRef.current) {
       setTimeout(() => inputRef.current.focus(), 100);
     }
@@ -34,16 +41,12 @@ const QuizScreen = ({ packId, onBack }) => {
 
   const handleCharInsert = (char) => {
     if (status !== 'typing') return;
-    
     if (inputRef.current) {
       const start = inputRef.current.selectionStart;
       const end = inputRef.current.selectionEnd;
       const text = inputValue;
       const newText = text.substring(0, start) + char + text.substring(end);
-      
       setInputValue(newText);
-      
-      // Update cursor position after React re-renders
       setTimeout(() => {
         inputRef.current.setSelectionRange(start + 1, start + 1);
         inputRef.current.focus();
@@ -55,34 +58,66 @@ const QuizScreen = ({ packId, onBack }) => {
 
   const checkAnswer = () => {
     if (!inputValue.trim() || status !== 'typing') return;
-    
+
     const userAns = inputValue.trim().toLowerCase();
     const exactAns = currentQuestion.answer.toLowerCase();
     const noAccentAns = currentQuestion.answer_no_accent.toLowerCase();
 
+    setUserAnswer(inputValue.trim());
+
     if (userAns === exactAns) {
       setStatus('correct');
       setStreak(s => s + 1);
+      // Feature 6: Track rule progress on correct
+      const triggeredTag = onCorrect(currentQuestion);
+      if (triggeredTag) {
+        // Delay showing rule card until after feedback is dismissed
+        setActiveRuleTag(triggeredTag);
+      }
     } else if (userAns === noAccentAns) {
       setStatus('warning');
-      // No streak penalty for warning
     } else {
       setStatus('error');
       setStreak(0);
+      // Feature 6: Reset rule progress on error
+      onError(currentQuestion);
     }
-    
-    // Unfocus input explicitly to prevent mobile keyboard from staying up oddly sometimes
+
     if (inputRef.current) {
       inputRef.current.blur();
     }
   };
 
-  const handleNext = () => {
+  // 关闭错误反馈卡片，重新作答当前题目
+  const handleRetry = () => {
     setInputValue('');
+    setUserAnswer('');
     setStatus('typing');
+  };
+
+  const handleNext = () => {
+    // If a rule card is pending, show it before advancing
+    if (activeRuleTag && status !== 'rule_card') {
+      // Show the rule card overlay
+      setStatus('rule_card');
+      return;
+    }
+    setInputValue('');
+    setUserAnswer('');
+    setStatus('typing');
+    setActiveRuleTag(null);
     setCurrentIndex(i => i + 1);
   };
 
+  const handleRuleCardDismiss = () => {
+    setInputValue('');
+    setUserAnswer('');
+    setStatus('typing');
+    setActiveRuleTag(null);
+    setCurrentIndex(i => i + 1);
+  };
+
+  // Finished screen
   if (isFinished) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white h-[100dvh]">
@@ -94,7 +129,7 @@ const QuizScreen = ({ packId, onBack }) => {
           你已经刷完了这个训练包里的所有题目。<br/><br/>
           <span className="bg-gray-50 px-4 py-2 rounded-lg font-medium text-gray-700">最终连击：🔥 {streak} 题</span>
         </p>
-        <button 
+        <button
           onClick={onBack}
           className={`w-full py-4 rounded-xl font-bold text-lg text-white ${styles.bgDark} shadow-md active:scale-95 transition-all`}
         >
@@ -106,7 +141,6 @@ const QuizScreen = ({ packId, onBack }) => {
 
   if (!currentQuestion) return null;
 
-  // Split sentence by blank separator (_____)
   const sentenceParts = currentQuestion.sentence.split('_____');
 
   return (
@@ -118,8 +152,8 @@ const QuizScreen = ({ packId, onBack }) => {
         </button>
         <div className="flex-1 px-4">
           <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div 
-              className={`h-full ${styles.bg} transition-all duration-300`} 
+            <div
+              className={`h-full ${styles.bg} transition-all duration-300`}
               style={{ width: `${Math.min(((currentIndex) / questions.length) * 100, 100)}%` }}
             />
           </div>
@@ -129,21 +163,18 @@ const QuizScreen = ({ packId, onBack }) => {
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-4 pb-32">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 relative overflow-hidden">
-          {/* Target Tense Badge */}
           <div className={`absolute top-0 right-0 py-1 px-3 text-xs font-bold text-white ${styles.bg} rounded-bl-xl shadow-sm z-10`}>
             {currentQuestion.tense.toUpperCase()}
           </div>
-        
           <h2 className="text-xl font-bold text-gray-800 leading-snug mt-2 mb-4 break-words">
             {sentenceParts[0]}
             <span className="inline-block mx-1 min-w-[3rem] border-b-2 border-gray-300"></span>
             {sentenceParts[1]}
           </h2>
           <p className="text-gray-500 text-sm">{currentQuestion.translation}</p>
-          
           <div className="mt-6 flex items-center gap-3">
             <span className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg text-sm font-medium">
               变位词：{currentQuestion.verb}
@@ -154,9 +185,9 @@ const QuizScreen = ({ packId, onBack }) => {
           </div>
         </div>
 
-        {/* Input Area */}
-        <form 
-          className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex shadow-inner-sm"
+        {/* Input */}
+        <form
+          className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex"
           onSubmit={(e) => { e.preventDefault(); checkAnswer(); }}
         >
           <input
@@ -172,12 +203,12 @@ const QuizScreen = ({ packId, onBack }) => {
             spellCheck="false"
             autoComplete="off"
           />
-          <button 
+          <button
             type="submit"
             disabled={!inputValue.trim() || status !== 'typing'}
             className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all ${
               inputValue.trim() && status === 'typing'
-                ? `${styles.bgDark} text-white shadow-md active:scale-95` 
+                ? `${styles.bgDark} text-white shadow-md active:scale-95`
                 : 'bg-gray-100 text-gray-400'
             }`}
           >
@@ -190,13 +221,34 @@ const QuizScreen = ({ packId, onBack }) => {
         )}
       </div>
 
-      <FeedbackCard 
-        status={status}
-        correctWord={currentQuestion.answer}
-        rule={currentQuestion.rule}
-        distractorError={currentQuestion.distractor_error}
-        onNext={handleNext}
-      />
+      {/* Feature 4: Error → DistractorFeedback; Correct/Warning → FeedbackCard */}
+      {status === 'error' && (
+        <DistractorFeedback
+          question={currentQuestion}
+          userAnswer={userAnswer}
+          onNext={handleNext}
+          onRetry={handleRetry}
+        />
+      )}
+
+      {(status === 'correct' || status === 'warning') && (
+        <FeedbackCard
+          status={status}
+          correctWord={currentQuestion.answer}
+          rule={currentQuestion.rule}
+          distractorError={currentQuestion.distractor_error}
+          streak={streak}
+          onNext={handleNext}
+        />
+      )}
+
+      {/* Feature 6: Rule Card overlay */}
+      {status === 'rule_card' && activeRuleTag && (
+        <RuleCard
+          ruleData={getRuleCard(activeRuleTag)}
+          onContinue={handleRuleCardDismiss}
+        />
+      )}
     </div>
   );
 };

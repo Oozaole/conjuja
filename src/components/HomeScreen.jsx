@@ -7,7 +7,7 @@ const themeStyles = {
   indigo: { title: 'text-indigo-600', bg: 'bg-white', border: 'border-indigo-100' }
 };
 
-const HomeScreen = ({ onSelectPack }) => {
+const HomeScreen = ({ onSelectPack, onOpenTable }) => {
   return (
     <div className="flex-1 flex flex-col p-4 pt-12 pb-8">
       <div className="mb-10 px-2 text-center">
@@ -16,11 +16,11 @@ const HomeScreen = ({ onSelectPack }) => {
         </h1>
         <p className="text-gray-500 text-base">西语变位「混淆专项」练习工具</p>
       </div>
-      
+
       <div className="space-y-4 flex-1 max-w-sm mx-auto w-full">
         {trainingPacks.map(pack => {
           const theme = themeStyles[pack.theme] || themeStyles.indigo;
-          
+
           return (
             <button
               key={pack.id}
@@ -37,8 +37,21 @@ const HomeScreen = ({ onSelectPack }) => {
             </button>
           );
         })}
+
+        {/* Feature 2: 完整变位表入口 */}
+        <button
+          onClick={onOpenTable}
+          className="w-full text-left bg-gradient-to-r from-indigo-50 to-purple-50 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition-all active:scale-[0.98] transform flex items-center gap-4"
+        >
+          <span className="text-3xl">📋</span>
+          <div className="flex-1">
+            <h2 className="text-lg font-bold text-indigo-700">完整变位表速填</h2>
+            <p className="text-indigo-500 text-sm">选择动词和时态，填写六格变位表</p>
+          </div>
+          <span className="text-indigo-400 text-xl">→</span>
+        </button>
       </div>
-      
+
       <div className="mt-8 text-center text-xs text-gray-400">
         <p>适合手机端浏览 · 支持特殊字符快填</p>
       </div>
