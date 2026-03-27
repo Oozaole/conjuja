@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FeedbackCard = ({ status, correctWord, rule, distractorError, onNext }) => {
+const FeedbackCard = ({ status, correctWord, rule, distractorError, tense, onNext }) => {
   if (status === 'idle' || status === 'typing') return null;
 
   const isCorrect = status === 'correct';
@@ -36,6 +36,11 @@ const FeedbackCard = ({ status, correctWord, rule, distractorError, onNext }) =>
           <h3 className={`text-xl font-bold ${titleColor} flex items-center gap-2`}>
             {titleText}
           </h3>
+          {tense && (
+            <span className="text-xs font-bold px-2 py-1 bg-white/50 rounded text-gray-600 uppercase">
+              {tense}
+            </span>
+          )}
         </div>
 
         <div className="space-y-3 mb-6">

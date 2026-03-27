@@ -55,15 +55,22 @@ const DistractorFeedback = ({ question, userAnswer, onNext, onRetry }) => {
             {' '}再想想
           </h3>
 
-          {/* 答案对比 */}
-          <div className="bg-white/60 rounded-xl p-3 border border-white mb-4 flex gap-4">
-            <div>
-              <span className="text-xs text-gray-500 block">你填的</span>
-              <span className="text-lg font-bold text-red-500 line-through">{userAnswer}</span>
+          {/* 时态提示 & 答案对比 */}
+          <div className="bg-white/60 rounded-xl p-3 border border-white mb-4">
+            <div className="mb-3">
+              <span className="text-xs font-bold text-gray-500 bg-gray-100/80 px-2 py-1 rounded inline-block uppercase">
+                时态: {question.blanks ? question.blanks.map(b => b.tense).join(' / ') : question.tense}
+              </span>
             </div>
-            <div>
-              <span className="text-xs text-gray-500 block">正确答案</span>
-              <span className="text-lg font-bold text-green-700">{question.answer}</span>
+            <div className="flex gap-4">
+              <div>
+                <span className="text-xs text-gray-500 block">你填的</span>
+                <span className="text-lg font-bold text-red-500 line-through">{userAnswer}</span>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 block">正确答案</span>
+                <span className="text-lg font-bold text-green-700">{question.answer || (question.blanks && question.blanks.map(b => b.answer).join(' / '))}</span>
+              </div>
             </div>
           </div>
 
