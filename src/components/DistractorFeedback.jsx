@@ -50,27 +50,25 @@ const DistractorFeedback = ({ question, userAnswer, onNext, onRetry }) => {
 
         <div className="overflow-y-auto p-5 pb-3 flex-1">
           {/* 标题 */}
-          <h3 className="text-xl font-bold text-red-700 mb-4">
-            <button onClick={onRetry} className="hover:opacity-70 active:scale-90 transition-all cursor-pointer">✕</button>
-            {' '}再想想
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-red-700">
+              <button onClick={onRetry} className="hover:opacity-70 active:scale-90 transition-all cursor-pointer">✕</button>
+              {' '}再想想
+            </h3>
+            <span className="text-xl font-bold text-red-700 uppercase">
+              {question.blanks ? question.blanks.map(b => b.tense).join(' / ') : question.tense}
+            </span>
+          </div>
 
-          {/* 时态提示 & 答案对比 */}
-          <div className="bg-white/60 rounded-xl p-3 border border-white mb-4">
-            <div className="mb-3">
-              <span className="text-xs font-bold text-gray-500 bg-gray-100/80 px-2 py-1 rounded inline-block uppercase">
-                时态: {question.blanks ? question.blanks.map(b => b.tense).join(' / ') : question.tense}
-              </span>
+          {/* 答案对比 */}
+          <div className="bg-white/60 rounded-xl p-3 border border-white mb-4 flex gap-4">
+            <div>
+              <span className="text-xs text-gray-500 block">你填的</span>
+              <span className="text-lg font-bold text-red-500 line-through">{userAnswer}</span>
             </div>
-            <div className="flex gap-4">
-              <div>
-                <span className="text-xs text-gray-500 block">你填的</span>
-                <span className="text-lg font-bold text-red-500 line-through">{userAnswer}</span>
-              </div>
-              <div>
-                <span className="text-xs text-gray-500 block">正确答案</span>
-                <span className="text-lg font-bold text-green-700">{question.answer || (question.blanks && question.blanks.map(b => b.answer).join(' / '))}</span>
-              </div>
+            <div>
+              <span className="text-xs text-gray-500 block">正确答案</span>
+              <span className="text-lg font-bold text-green-700">{question.answer || (question.blanks && question.blanks.map(b => b.answer).join(' / '))}</span>
             </div>
           </div>
 

@@ -32,12 +32,12 @@ const FeedbackCard = ({ status, correctWord, rule, distractorError, tense, onNex
       <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] opacity-100 transition-opacity pointer-events-auto" onClick={onNext} />
       
       <div className={`relative pointer-events-auto w-full max-w-md mx-auto ${bgColor} rounded-t-3xl shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.15)] p-5 pb-8 animate-slide-up backdrop-blur-xl border-t border-white/50`}>
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center justify-between mb-3">
           <h3 className={`text-xl font-bold ${titleColor} flex items-center gap-2`}>
             {titleText}
           </h3>
           {tense && (
-            <span className="text-xs font-bold px-2 py-1 bg-white/50 rounded text-gray-600 uppercase">
+            <span className={`text-xl font-bold ${titleColor} uppercase`}>
               {tense}
             </span>
           )}

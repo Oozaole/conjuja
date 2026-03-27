@@ -384,6 +384,7 @@ const QuizScreen = ({ packId, onBack }) => {
           rule={currentQuestion.rule}
           distractorError={currentQuestion.distractor_error}
           streak={streak}
+          tense={isMultiBlank ? currentQuestion.blanks.map(b => b.tense).join(' / ') : currentQuestion.tense}
           onNext={handleNext}
         />
       )}
