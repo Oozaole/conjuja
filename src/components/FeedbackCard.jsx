@@ -37,7 +37,7 @@ const FeedbackCard = ({ status, correctWord, rule, distractorError, tense, onNex
             {titleText}
           </h3>
           {tense && (
-            <span className={`text-xl font-bold ${titleColor} uppercase`}>
+            <span className={`text-xs font-bold ${titleColor} uppercase bg-white/50 shadow-sm px-2 py-1 rounded-md text-right max-w-[50%] leading-tight`}>
               {tense}
             </span>
           )}
