@@ -182,14 +182,30 @@ const QuizScreen = ({ packId, onBack }) => {
   // Finished screen
   if (isFinished) {
     const accuracy = roundQuestions.length > 0 ? Math.round((correctCount / roundQuestions.length) * 100) : 0;
+    
+    let accuracyTitle = '';
+    let accuracyEmoji = '';
+    if (accuracy === 100) { accuracyTitle = '小菜一碟'; accuracyEmoji = '🏆'; }
+    else if (accuracy >= 90) { accuracyTitle = '渐入佳境'; accuracyEmoji = '🌟'; }
+    else if (accuracy >= 70) { accuracyTitle = '稳扎稳打'; accuracyEmoji = '👏'; }
+    else if (accuracy >= 50) { accuracyTitle = '继续加油'; accuracyEmoji = '💪'; }
+    else { accuracyTitle = '需多加练习'; accuracyEmoji = '📚'; }
+
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white h-[100dvh]">
-        <div className={`w-20 h-20 ${styles.bgLight} ${styles.text} rounded-full flex items-center justify-center mb-6`}>
+        <div className={`w-20 h-20 ${styles.bgLight} ${styles.text} rounded-full flex items-center justify-center mb-4`}>
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
         </div>
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-2">第 {roundNum} 轮完成！</h2>
-        <div className="text-gray-500 mb-8 text-center space-y-3">
-          <p className="text-sm text-gray-400">本轮从 {allQuestions.length} 题中随机抽取了 {roundQuestions.length} 题</p>
+        
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-3">第 {roundNum} 轮完成！</h2>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-100/50">
+            <span className="text-xl leading-none">{accuracyEmoji}</span>
+            <span className="font-bold text-blue-800 text-lg tracking-wide">{accuracyTitle}</span>
+          </div>
+        </div>
+
+        <div className="text-gray-500 mb-8 text-center space-y-4">
           <div className="flex gap-4 justify-center">
             <span className="bg-green-50 px-4 py-2 rounded-lg font-medium text-green-700">✅ 正确率 {accuracy}%</span>
             <span className="bg-gray-50 px-4 py-2 rounded-lg font-medium text-gray-700">🔥 最高连击 {streak}</span>
