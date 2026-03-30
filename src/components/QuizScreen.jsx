@@ -182,21 +182,20 @@ const QuizScreen = ({ packId, onBack }) => {
   // Finished screen
   if (isFinished) {
     const accuracy = roundQuestions.length > 0 ? Math.round((correctCount / roundQuestions.length) * 100) : 0;
-    
+
     let accuracyTitle = '';
     let accuracyEmoji = '';
     if (accuracy === 100) { accuracyTitle = '小菜一碟'; accuracyEmoji = '🏆'; }
-    else if (accuracy >= 90) { accuracyTitle = '渐入佳境'; accuracyEmoji = '🌟'; }
-    else if (accuracy >= 70) { accuracyTitle = '稳扎稳打'; accuracyEmoji = '👏'; }
+    else if (accuracy >= 80) { accuracyTitle = '稳扎稳打'; accuracyEmoji = '👏'; }
     else if (accuracy >= 50) { accuracyTitle = '继续加油'; accuracyEmoji = '💪'; }
-    else { accuracyTitle = '需多加练习'; accuracyEmoji = '📚'; }
+    else { accuracyTitle = '菜就多练'; accuracyEmoji = '📚'; }
 
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white h-[100dvh]">
         <div className={`w-20 h-20 ${styles.bgLight} ${styles.text} rounded-full flex items-center justify-center mb-4`}>
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
         </div>
-        
+
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-3">第 {roundNum} 轮完成！</h2>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-100/50">
@@ -205,10 +204,16 @@ const QuizScreen = ({ packId, onBack }) => {
           </div>
         </div>
 
-        <div className="text-gray-500 mb-8 text-center space-y-4">
+        <div className="text-gray-500 mb-8 text-center space-y-4 w-full">
           <div className="flex gap-4 justify-center">
-            <span className="bg-green-50 px-4 py-2 rounded-lg font-medium text-green-700">✅ 正确率 {accuracy}%</span>
-            <span className="bg-gray-50 px-4 py-2 rounded-lg font-medium text-gray-700">🔥 最高连击 {streak}</span>
+            <div className="bg-green-50 px-5 py-3 rounded-2xl flex flex-col items-center flex-1 border border-green-100 shadow-sm">
+              <span className="text-sm font-bold text-green-600/80 mb-1">正确率</span>
+              <span className="text-4xl font-black text-green-600">{accuracy}%</span>
+            </div>
+            <div className={`px-5 py-3 rounded-2xl flex flex-col items-center flex-1 border shadow-sm ${styles.bgLight} border-opacity-50`}>
+              <span className={`text-sm font-bold opacity-80 mb-1 ${styles.text}`}>最高连击</span>
+              <span className={`text-4xl font-black ${styles.text}`}>{streak}</span>
+            </div>
           </div>
         </div>
         <div className="w-full space-y-3">
@@ -239,9 +244,8 @@ const QuizScreen = ({ packId, onBack }) => {
       <React.Fragment key={i}>
         {part}
         {i < sentenceParts.length - 1 && (
-          <span className={`inline-block mx-1 min-w-[3rem] border-b-2 ${
-            isMultiBlank && i === activeBlankIdx ? 'border-blue-400' : 'border-gray-300'
-          }`}>
+          <span className={`inline-block mx-1 min-w-[3rem] border-b-2 ${isMultiBlank && i === activeBlankIdx ? 'border-blue-400' : 'border-gray-300'
+            }`}>
             {isMultiBlank && (
               <span className="text-xs text-gray-400 font-normal">#{i + 1}</span>
             )}
@@ -255,9 +259,8 @@ const QuizScreen = ({ packId, onBack }) => {
   const renderTags = () => {
     if (isMultiBlank) {
       return currentQuestion.blanks.map((b, i) => (
-        <span key={i} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-          i === activeBlankIdx ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-        }`}>
+        <span key={i} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${i === activeBlankIdx ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+          }`}>
           #{i + 1} {b.verb}（{b.person}）
         </span>
       ));
@@ -286,7 +289,7 @@ const QuizScreen = ({ packId, onBack }) => {
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
         <div className="flex-1 px-4">
-          <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-[8px] w-full bg-gray-100 rounded-full overflow-hidden">
             <div
               className={`h-full ${styles.bg} transition-all duration-300`}
               style={{ width: `${Math.min(((currentIndex) / roundQuestions.length) * 100, 100)}%` }}
@@ -300,7 +303,7 @@ const QuizScreen = ({ packId, onBack }) => {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-4 pb-32">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 relative overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] border border-gray-100 p-6 mb-4 relative overflow-hidden">
           <h2 className="text-xl font-bold text-gray-800 leading-snug mt-2 mb-4 break-words">
             {renderSentence()}
           </h2>
@@ -319,15 +322,13 @@ const QuizScreen = ({ packId, onBack }) => {
             <div className="space-y-2 p-2">
               {currentQuestion.blanks.map((b, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                    i === activeBlankIdx ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'
-                  }`}>#{i + 1}</span>
+                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${i === activeBlankIdx ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'
+                    }`}>#{i + 1}</span>
                   <input
                     ref={el => multiRefs.current[i] = el}
                     type="text"
-                    className={`flex-1 bg-gray-50 px-4 py-3 rounded-xl text-lg font-bold text-gray-900 outline-none border-2 transition-all ${
-                      i === activeBlankIdx ? 'border-blue-300 bg-blue-50/30' : 'border-transparent'
-                    } ${styles.caret} placeholder-gray-300`}
+                    className={`flex-1 bg-gray-50 px-4 py-3 rounded-xl text-lg font-bold text-gray-900 outline-none border-2 transition-all ${i === activeBlankIdx ? 'border-blue-300 bg-blue-50/30' : 'border-transparent'
+                      } ${styles.caret} placeholder-gray-300`}
                     placeholder={`${b.verb} (${b.person})...`}
                     value={multiInputs[i] || ''}
                     onChange={(e) => setMultiInputs(prev => prev.map((v, j) => j === i ? e.target.value : v))}
@@ -343,9 +344,8 @@ const QuizScreen = ({ packId, onBack }) => {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className={`w-full py-3 rounded-xl font-bold text-lg transition-all mt-2 ${
-                  canSubmit ? `${styles.bgDark} text-white shadow-md active:scale-95` : 'bg-gray-100 text-gray-400'
-                }`}
+                className={`w-full h-[52px] rounded-xl font-bold text-lg transition-all mt-2 ${canSubmit ? `${styles.bgDark} text-white shadow-md active:scale-95` : 'bg-gray-100 text-gray-400'
+                  }`}
               >
                 确认提交
               </button>
@@ -368,11 +368,10 @@ const QuizScreen = ({ packId, onBack }) => {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all ${
-                  canSubmit ? `${styles.bgDark} text-white shadow-md active:scale-95` : 'bg-gray-100 text-gray-400'
-                }`}
+                className={`w-14 h-14 shrink-0 rounded-xl flex items-center justify-center transition-all ${canSubmit ? `${styles.bgDark} text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] active:scale-95` : 'bg-gray-100 text-gray-400'
+                  }`}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
               </button>
             </div>
           )}

@@ -2,9 +2,16 @@ import React from 'react';
 import { trainingPacks } from '../data/questions';
 
 const themeStyles = {
-  blue: { title: 'text-blue-600', bg: 'bg-white', border: 'border-blue-100' },
-  teal: { title: 'text-teal-600', bg: 'bg-white', border: 'border-teal-100' },
-  indigo: { title: 'text-indigo-600', bg: 'bg-white', border: 'border-indigo-100' }
+  blue: { title: 'text-blue-600', bg: 'bg-white', border: 'border-blue-100', leftBar: 'border-l-blue-500' },
+  teal: { title: 'text-teal-600', bg: 'bg-white', border: 'border-teal-100', leftBar: 'border-l-teal-500' },
+  indigo: { title: 'text-indigo-600', bg: 'bg-white', border: 'border-indigo-100', leftBar: 'border-l-indigo-500' }
+};
+
+const diffBadgeColor = {
+  'A1': 'bg-green-100 text-green-700',
+  'A2': 'bg-green-100 text-green-700',
+  'B1': 'bg-orange-100 text-orange-700',
+  'B2': 'bg-red-100 text-red-700'
 };
 
 const HomeScreen = ({ onSelectPack, onOpenTable }) => {
@@ -25,11 +32,11 @@ const HomeScreen = ({ onSelectPack, onOpenTable }) => {
             <button
               key={pack.id}
               onClick={() => onSelectPack(pack.id)}
-              className={`w-full text-left ${theme.bg} p-6 rounded-2xl shadow-sm border ${theme.border} hover:shadow-md transition-all active:scale-[0.98] transform flex flex-col gap-2 relative overflow-hidden group`}
+              className={`w-full text-left ${theme.bg} p-6 rounded-2xl shadow-sm border border-l-[6px] ${theme.border} ${theme.leftBar} hover:shadow-md transition-all active:scale-[0.98] transform flex flex-col gap-2 relative overflow-hidden group`}
             >
               <div className="flex justify-between items-start mb-1">
                 <h2 className={`text-xl font-bold ${theme.title}`}>{pack.title}</h2>
-                <span className="text-xs font-bold uppercase tracking-wider bg-gray-50 text-gray-500 px-2 py-1 rounded-md">
+                <span className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md ${diffBadgeColor[pack.difficulty] || 'bg-gray-100 text-gray-600'}`}>
                   {pack.difficulty}
                 </span>
               </div>

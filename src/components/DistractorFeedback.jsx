@@ -73,7 +73,7 @@ const DistractorFeedback = ({ question, userAnswer, onNext, onRetry }) => {
                                       ans.trim().toLowerCase() === blank.answer_no_accent.toLowerCase();
                     return (
                       <React.Fragment key={i}>
-                        <span className={isCorrect ? "text-green-700" : "text-red-500 line-through"}>
+                        <span className={isCorrect ? "text-green-700" : "text-red-500 line-through decoration-red-500/80 decoration-2"}>
                           {ans || '?'}
                         </span>
                         {i < question.blanks.length - 1 && <span className="text-gray-400 mx-1">/</span>}
@@ -81,7 +81,7 @@ const DistractorFeedback = ({ question, userAnswer, onNext, onRetry }) => {
                     );
                   })
                 ) : (
-                  <span className="text-red-500 line-through">{userAnswer}</span>
+                  <span className="text-red-500 line-through decoration-red-500/80 decoration-2">{userAnswer}</span>
                 )}
               </div>
             </div>

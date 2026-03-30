@@ -149,21 +149,34 @@ const ConjugationTable = ({ onBack }) => {
 
         {/* Phase: Select */}
         {phase === 'select' && (
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">选择动词</label>
-              <select
-                value={selectedVerb}
-                onChange={e => {
-                  setSelectedVerb(e.target.value);
-                  setSelectedTense('');
-                }}
-                className="w-full p-3 rounded-xl border border-gray-200 bg-white text-lg font-bold text-gray-900"
-              >
-                {verbOptions.map(v => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-bold text-gray-700">选择动词</label>
+                {currentTable && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">{currentTable.difficulty}</span>
+                    {currentTable.is_irregular && <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold">不规则</span>}
+                  </div>
+                )}
+              </div>
+              <div className="relative">
+                <select
+                  value={selectedVerb}
+                  onChange={e => {
+                    setSelectedVerb(e.target.value);
+                    setSelectedTense('');
+                  }}
+                  className="w-full p-4 rounded-xl border-2 border-indigo-100 bg-indigo-50/30 text-xl font-bold text-indigo-900 appearance-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition-all cursor-pointer shadow-sm"
+                >
+                  {verbOptions.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                </div>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">选择时态</label>
@@ -184,13 +197,6 @@ const ConjugationTable = ({ onBack }) => {
                 ))}
               </div>
             </div>
-
-            {currentTable && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span className="bg-gray-100 px-2 py-1 rounded">{currentTable.difficulty}</span>
-                {currentTable.is_irregular && <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">不规则动词</span>}
-              </div>
-            )}
 
             <button
               onClick={handleStart}
